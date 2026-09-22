@@ -1,4 +1,4 @@
-name: Build Android APK
+Name: Build Android APK
 
 on:
   push:
@@ -75,6 +75,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ScientificCalculator-APK
-          path: |
-            ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
+          path: extracted/ScientificCalculator/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
