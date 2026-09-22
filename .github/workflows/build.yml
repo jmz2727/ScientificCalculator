@@ -12,13 +12,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Unzip project files
+      - name: Extract all contents
         run: |
           unzip -o ScientificCalculator.zip
-          # Copy content if inside a subfolder
-          if [ -d "ScientificCalculator" ]; then
-            cp -rn ScientificCalculator/* . || true
-          fi
+          # Move files from subfolder if exists
+          find . -maxdepth 2 -name "gradlew" -execdir cp -rn ./* . \; || true
+          ls -la
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -27,19 +26,15 @@ jobs:
           distribution: 'temurin'
 
       - name: Make gradlew executable
-        run: |
-          chmod +x gradlew || true
-          find . -name "gradlew" -exec chmod +x {} \;
+        run: find . -name "gradlew" -exec chmod +x {} \;
 
-      - name: Build APK with Gradle
+      - name: Build APK
         run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew assembleDebug
-          else
-            find . -name "gradlew" -execdir ./gradlew assembleDebug \;
-          fi
+          BUILD_DIR=$(dirname $(find . -name "gradlew" | head -n 1))
+          cd $BUILD_DIR
+          ./gradlew assembleDebug --stacktrace
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: ScientificCalculator-APK
