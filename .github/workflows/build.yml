@@ -46,15 +46,12 @@ jobs:
             mv "$file" "$dir/$clean"
           done
 
-          echo "=== APP FILES AFTER FIX ==="
-          ls -lab "$PROJECT_DIR/app"
-
           if [ ! -f "$PROJECT_DIR/app/build.gradle.kts" ]; then
-            echo "ERROR: app/build.gradle.kts still not found"
+            echo "ERROR: app/build.gradle.kts not found"
             exit 1
           fi
 
-          echo "OK: app/build.gradle.kts fixed successfully"
+          echo "OK: Android project prepared"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5
@@ -62,25 +59,31 @@ jobs:
           java-version: '17'
           distribution: temurin
 
-      - name: Set up Gradle
+      - name: Set up Gradle 8.2
         uses: gradle/actions/setup-gradle@v5
         with:
+          gradle-version: '8.2'
           cache-disabled: true
 
-      - name: Generate Gradle Wrapper
+      - name: Generate Gradle Wrapper 8.2
         shell: bash
         run: |
           set -e
 
           cd "$PROJECT_DIR"
 
-          gradle wrapper --no-configuration-cache
+          gradle wrapper \
+            --gradle-version 8.2 \
+            --distribution-type bin \
+            --no-configuration-cache
 
           chmod +x gradlew
 
-          echo "=== Wrapper generated ==="
+          echo "=== Gradle Wrapper ==="
           ./gradlew --version
-          ls -la gradle/wrapper/
+
+          echo "=== Wrapper Properties ==="
+          cat gradle/wrapper/gradle-wrapper.properties
 
       - name: Build Debug APK
         shell: bash
