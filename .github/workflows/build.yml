@@ -38,6 +38,16 @@ jobs:
           echo "=== Project ==="
           ls -la "$PROJECT_DIR"
 
+          echo "=== APP FILE NAMES ==="
+          ls -lab "$PROJECT_DIR/app"
+
+          echo "=== GRADLE FILE CHECK ==="
+          if [ -f "$PROJECT_DIR/app/build.gradle.kts" ]; then
+            echo "OK: app/build.gradle.kts found with exact name"
+          else
+            echo "ERROR: exact app/build.gradle.kts NOT FOUND"
+          fi
+
       - name: Set up JDK 17
         uses: actions/setup-java@v5
         with:
