@@ -64,6 +64,8 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-disabled: true
 
       - name: Generate Gradle Wrapper
         shell: bash
@@ -72,12 +74,12 @@ jobs:
 
           cd "$PROJECT_DIR"
 
-          gradle wrapper
+          gradle wrapper --no-configuration-cache
 
           chmod +x gradlew
 
           echo "=== Wrapper generated ==="
-          ls -la gradlew
+          ./gradlew --version
           ls -la gradle/wrapper/
 
       - name: Build Debug APK
@@ -87,7 +89,9 @@ jobs:
 
           cd "$PROJECT_DIR"
 
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug \
+            --no-configuration-cache \
+            --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
